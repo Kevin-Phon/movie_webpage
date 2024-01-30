@@ -1,23 +1,27 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import SearchIcon from "./search.svg";
+import MovieCard from "./components/MovieCard";
 
 const API_URL = "http://www.omdbapi.com?apikey=aba8cf59";
 
 const movie1 = {
-  "Title": "Batman v Superman: Dawn of Justice (Ultimate Edition)",
-  "Year": "2016",
-  "imdbID": "tt18689424",
-  "Type": "movie",
-  "Poster": "https://m.media-amazon.com/images/M/MV5BOTRlNWQwM2ItNjkyZC00MGI3LThkYjktZmE5N2FlMzcyNTIyXkEyXkFqcGdeQXVyMTEyNzgwMDUw._V1_SX300.jpg"
-}
+  Title: "Batman v Superman: Dawn of Justice (Ultimate Edition)",
+  Year: "2016",
+  imdbID: "tt18689424",
+  Type: "movie",
+  Poster:
+    "https://m.media-amazon.com/images/M/MV5BOTRlNWQwM2ItNjkyZC00MGI3LThkYjktZmE5N2FlMzcyNTIyXkEyXkFqcGdeQXVyMTEyNzgwMDUw._V1_SX300.jpg",
+};
 
 const App = () => {
+  let [movies, setMovies] = useState([]);
+
   const searchMovies = async (title) => {
     let response = await fetch(`${API_URL}&s=${title}`);
     let data = await response.json();
 
-    console.log(data.Search);
+    setMovies(data.Search);
   };
 
   useEffect(() => {
@@ -36,23 +40,18 @@ const App = () => {
       </div>
 
       {/* movie card  */}
-      <div className="container">
-        <div className="movie">
-          <div>
-            <p>{movie1.Year}</p>
-          </div>
 
-          <div>
-            <img src={movie1.Poster !== 'N/A' ?  movie1.Poster : 'http://via.placeholder.com/400'} alt={movie1.Title} />
-          </div>
-
-          <div>
-            <span>{movie1.Type}</span>
-            <h3>{movie1.Title}</h3>
-          </div>
+      {movies.length > 0 ? (
+        <div className="container">
+          {movies.map((movie) => (
+            <MovieCard movie={movie} />
+          ))}
         </div>
-
-      </div>
+      ) : (
+        <div className="empty">
+          <h1>No movies found!</h1>
+        </div>
+      )}
     </div>
   );
 };
